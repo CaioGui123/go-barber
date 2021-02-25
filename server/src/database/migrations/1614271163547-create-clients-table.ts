@@ -34,6 +34,7 @@ export class createClientsTable1614271163547 implements MigrationInterface {
           {
             name: 'image_id',
             type: 'integer',
+            isNullable: true,
           },
         ],
         foreignKeys: [
