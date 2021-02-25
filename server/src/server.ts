@@ -1,8 +1,12 @@
+import 'reflect-metadata';
+
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
 import helmet from 'helmet';
 import routes from './routes';
+
+import './database/connection';
 
 const app = express();
 
