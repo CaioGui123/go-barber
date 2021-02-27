@@ -1,7 +1,6 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Barber from '../models/Barber';
-import BarberImage from '../models/BarberImage';
 
 // import app from '../config/app';
 
@@ -83,7 +82,9 @@ export default class ClientController {
       const repository = getRepository(Barber);
       const { id } = req.params;
 
-      const barber = await repository.findOne(id, { relations: ['images'] });
+      const barber = await repository.findOneOrFail(id, {
+        relations: ['images'],
+      });
 
       if (!barber) {
         return res.status(400).json({
@@ -94,10 +95,10 @@ export default class ClientController {
       await repository.delete(id);
 
       return res.json({
-        message: `O barbeiro #${id} foi deletado`,
+        message: `Conta deletada com sucesso!`,
       });
     } catch (error) {
-      return res.status(400).json({ message: 'Erro ao deletar o barbeiro' });
+      return res.status(400).json({ message: 'Erro ao deletar a conta' });
     }
   }
 }

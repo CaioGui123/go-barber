@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 
 import ClientController from './controllers/ClientController';
+import ClientImageController from './controllers/ClientImageController';
 import BarberController from './controllers/BarberController';
 import BarberImageController from './controllers/BarberImageController';
 
@@ -18,6 +19,14 @@ routes.post('/clients', ClientController.store);
 routes.put('/clients/:id', ClientController.update);
 routes.delete('/clients/:id', ClientController.destroy);
 
+// Client Images Routes
+routes.post(
+  '/clients/:id/image',
+  upload.array('image', 1),
+  ClientImageController.store,
+);
+routes.delete('/clients/:id/image', ClientImageController.destroy);
+
 // Barbers Routes
 routes.get('/barbers', BarberController.index);
 routes.get('/barbers/:id', BarberController.show);
@@ -29,11 +38,11 @@ routes.delete('/barbers/:id', BarberController.destroy);
 routes.post(
   '/barbers/:id/images',
   upload.array('images[]', 10),
-  BarberImageController.storeImages,
+  BarberImageController.store,
 );
 routes.delete(
   '/barbers/:barberId/images/:imageId',
-  BarberImageController.removeImage,
+  BarberImageController.destroy,
 );
 
 export default routes;

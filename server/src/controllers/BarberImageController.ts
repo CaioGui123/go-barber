@@ -6,13 +6,13 @@ import BarberImage from '../models/BarberImage';
 import deleteImage from '../utils/deleteImage';
 
 export default class BarberImageController {
-  static async storeImages(req: Request, res: Response) {
+  static async store(req: Request, res: Response) {
     try {
       const barberRepository = getRepository(Barber);
       const imageRepository = getRepository(BarberImage);
       const { id } = req.params;
 
-      const barber = await barberRepository.findOne(id);
+      const barber = await barberRepository.findOneOrFail(id);
 
       if (!barber) {
         return res.status(400).json({
@@ -44,13 +44,13 @@ export default class BarberImageController {
     }
   }
 
-  static async removeImage(req: Request, res: Response) {
+  static async destroy(req: Request, res: Response) {
     try {
       const barberRepository = getRepository(Barber);
       const imageRepository = getRepository(BarberImage);
       const { barberId, imageId } = req.params;
 
-      const barber = await barberRepository.findOne(barberId);
+      const barber = await barberRepository.findOneOrFail(barberId);
 
       if (!barber) {
         return res.status(400).json({
@@ -58,7 +58,7 @@ export default class BarberImageController {
         });
       }
 
-      const image = await imageRepository.findOne(imageId);
+      const image = await imageRepository.findOneOrFail(imageId);
 
       if (!image) {
         return res.status(400).json({ message: 'Imagem não encontrada' });

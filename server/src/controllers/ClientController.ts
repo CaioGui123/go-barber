@@ -2,6 +2,8 @@ import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Client from '../models/Client';
 
+import deleteImage from '../utils/deleteImage';
+
 export default class ClientController {
   static async index(req: Request, res: Response) {
     try {
@@ -11,7 +13,7 @@ export default class ClientController {
 
       return res.json(clients);
     } catch (error) {
-      return res.status(400).json({ message: 'Error 400' });
+      return res.status(400).json({ message: 'Erro ao procurar os clientes' });
     }
   }
 
@@ -30,7 +32,7 @@ export default class ClientController {
 
       return res.json(client);
     } catch (error) {
-      return res.status(400).json({ message: 'Error 400' });
+      return res.status(400).json({ message: 'Erro ao encontrar o cliente' });
     }
   }
 
@@ -68,7 +70,7 @@ export default class ClientController {
       return res.status(201).json(client);
     } catch (error) {
       console.log(error);
-      return res.status(400).json({ message: 'Erro ao cadastrar' });
+      return res.status(400).json({ message: 'Erro ao atualizar' });
     }
   }
 
@@ -87,9 +89,9 @@ export default class ClientController {
 
       await repository.delete(id);
 
-      return res.json({ message: `O cliente #${id} foi deletado` });
+      return res.json({ message: `Conta deletada com sucesso!` });
     } catch (error) {
-      return res.status(400).json({ message: 'Error 400' });
+      return res.status(400).json({ message: 'Error ao deletar a conta' });
     }
   }
 }
