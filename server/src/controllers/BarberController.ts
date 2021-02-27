@@ -1,0 +1,103 @@
+import { getRepository } from 'typeorm';
+import { Request, Response } from 'express';
+import Barber from '../models/Barber';
+import BarberImage from '../models/BarberImage';
+
+// import app from '../config/app';
+
+export default class ClientController {
+  static async index(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Barber);
+
+      const barbers = await repository.find({ relations: ['images'] });
+
+      return res.json(barbers);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({ message: 'Error 400' });
+    }
+  }
+
+  static async show(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Barber);
+      const { id } = req.params;
+
+      const barber = await repository.findOneOrFail(id, {
+        relations: ['images'],
+      });
+
+      if (!barber) {
+        return res.status(400).json({
+          message: `Barbeiro #${id} não encontrado`,
+        });
+      }
+
+      return res.json(barber);
+    } catch (error) {
+      return res.status(400).json({ message: 'Error 400' });
+    }
+  }
+
+  static async store(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Barber);
+      const data = req.body;
+
+      const barber = repository.create(data);
+
+      await repository.save(barber);
+
+      return res.status(201).json(barber);
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({ message: 'Erro ao cadastrar' });
+    }
+  }
+
+  static async update(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Barber);
+      const { id } = req.params;
+      const data = req.body;
+
+      const barber = await repository.findOneOrFail(id);
+
+      if (!barber) {
+        return res.status(400).json({
+          message: `Barbeiro #${id} não foi encontrado`,
+        });
+      }
+
+      await repository.update(id, data);
+
+      return res.status(201).json(barber);
+    } catch (error) {
+      return res.status(400).json({ message: 'Erro ao cadastrar' });
+    }
+  }
+
+  static async destroy(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Barber);
+      const { id } = req.params;
+
+      const barber = await repository.findOne(id, { relations: ['images'] });
+
+      if (!barber) {
+        return res.status(400).json({
+          message: `Barbeiro #${id} não foi encontrado`,
+        });
+      }
+
+      await repository.delete(id);
+
+      return res.json({
+        message: `O barbeiro #${id} foi deletado`,
+      });
+    } catch (error) {
+      return res.status(400).json({ message: 'Erro ao deletar o barbeiro' });
+    }
+  }
+}

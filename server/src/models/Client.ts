@@ -1,11 +1,4 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
-import Image from './Image';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('clients')
 export default class Client {
@@ -24,9 +17,6 @@ export default class Client {
   @Column()
   mobile_phone: string;
 
-  @OneToOne(() => Image, (image) => image.client, {
-    cascade: ['insert', 'update'],
-  })
-  @JoinColumn({ name: 'image_id' })
-  image: Image;
+  @Column()
+  image: string;
 }

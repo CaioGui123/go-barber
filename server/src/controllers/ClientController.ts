@@ -1,14 +1,13 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Client from '../models/Client';
-import Image from '../models/Image';
 
 export default class ClientController {
   static async index(req: Request, res: Response) {
     try {
       const repository = getRepository(Client);
 
-      const clients = await repository.find({ relations: ['image'] });
+      const clients = await repository.find();
 
       return res.json(clients);
     } catch (error) {
@@ -21,7 +20,7 @@ export default class ClientController {
       const repository = getRepository(Client);
       const { id } = req.params;
 
-      const client = await repository.findOne(id, { relations: ['image'] });
+      const client = await repository.findOneOrFail(id);
 
       if (!client) {
         return res.status(400).json({
@@ -46,7 +45,6 @@ export default class ClientController {
 
       return res.status(201).json(client);
     } catch (error) {
-      console.log(error);
       return res.status(400).json({ message: 'Erro ao cadastrar' });
     }
   }
@@ -57,7 +55,7 @@ export default class ClientController {
       const { id } = req.params;
       const data = req.body;
 
-      const client = await repository.findOne(id);
+      const client = await repository.findOneOrFail(id);
 
       if (!client) {
         return res.status(400).json({
@@ -77,10 +75,9 @@ export default class ClientController {
   static async destroy(req: Request, res: Response) {
     try {
       const repository = getRepository(Client);
-      const imageRepository = getRepository(Image);
       const { id } = req.params;
 
-      const client = await repository.findOne(id, { relations: ['image'] });
+      const client = await repository.findOneOrFail(id);
 
       if (!client) {
         return res.status(400).json({
@@ -88,19 +85,11 @@ export default class ClientController {
         });
       }
 
-      if (client.image) {
-        await imageRepository.delete(client.image.id);
-      }
-
       await repository.delete(id);
 
-      return res.json({
-        message: `O cliente #${id} foi deletado`,
-      });
+      return res.json({ message: `O cliente #${id} foi deletado` });
     } catch (error) {
-      return res.status(400).json({
-        message: 'Error 400',
-      });
+      return res.status(400).json({ message: 'Error 400' });
     }
   }
 }
