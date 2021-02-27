@@ -1,8 +1,7 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Barber from '../models/Barber';
-
-// import app from '../config/app';
+import validate from '../validations/BarberValidation';
 
 export default class ClientController {
   static async index(req: Request, res: Response) {
@@ -44,14 +43,15 @@ export default class ClientController {
       const repository = getRepository(Barber);
       const data = req.body;
 
+      await validate(data);
+
       const barber = repository.create(data);
 
       await repository.save(barber);
 
       return res.status(201).json(barber);
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({ message: 'Erro ao cadastrar' });
+    } catch (errors) {
+      return res.status(422).json({ message: 'Erros de Validação', errors });
     }
   }
 
@@ -69,11 +69,13 @@ export default class ClientController {
         });
       }
 
+      await validate(data);
+
       await repository.update(id, data);
 
       return res.status(201).json(barber);
-    } catch (error) {
-      return res.status(400).json({ message: 'Erro ao cadastrar' });
+    } catch (errors) {
+      return res.status(422).json({ message: 'Erros de Validação', errors });
     }
   }
 
