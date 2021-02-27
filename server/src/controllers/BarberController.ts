@@ -2,6 +2,7 @@ import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Barber from '../models/Barber';
 import validate from '../validations/BarberValidation';
+import deleteImage from '../utils/deleteImage';
 
 export default class ClientController {
   static async index(req: Request, res: Response) {
@@ -94,11 +95,13 @@ export default class ClientController {
         });
       }
 
+      barber.images.forEach((image) => {
+        deleteImage(image.name);
+      });
+
       await repository.delete(id);
 
-      return res.json({
-        message: `Conta deletada com sucesso!`,
-      });
+      return res.json({ message: 'Conta deletada com sucesso!' });
     } catch (error) {
       return res.status(400).json({ message: 'Erro ao deletar a conta' });
     }

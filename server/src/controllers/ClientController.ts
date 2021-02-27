@@ -2,6 +2,7 @@ import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Client from '../models/Client';
 import validate from '../validations/ClientValidation';
+import deleteImage from '../utils/deleteImage';
 
 export default class ClientController {
   static async index(req: Request, res: Response) {
@@ -88,6 +89,8 @@ export default class ClientController {
           message: `Cliente #${id} não foi encontrado`,
         });
       }
+
+      deleteImage(client.image);
 
       await repository.delete(id);
 
