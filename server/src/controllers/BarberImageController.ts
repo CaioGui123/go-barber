@@ -6,7 +6,7 @@ import BarberImage from '../models/BarberImage';
 import deleteImage from '../utils/deleteImage';
 
 export default class BarberImageController {
-  static async store(req: Request, res: Response) {
+  static async massStore(req: Request, res: Response) {
     try {
       const barberRepository = getRepository(Barber);
       const imageRepository = getRepository(BarberImage);

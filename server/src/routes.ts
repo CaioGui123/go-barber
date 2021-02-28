@@ -38,7 +38,7 @@ routes.delete('/barbers/:id', BarberController.destroy);
 routes.post(
   '/barbers/:id/images',
   upload.array('images[]', 10),
-  BarberImageController.store,
+  BarberImageController.massStore,
 );
 routes.delete(
   '/barbers/:barberId/images/:imageId',

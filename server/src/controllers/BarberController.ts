@@ -1,6 +1,8 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Barber from '../models/Barber';
+import BarberView from '../views/BarberView';
+
 import validate from '../validations/BarberValidation';
 import deleteImage from '../utils/deleteImage';
 
@@ -11,10 +13,11 @@ export default class ClientController {
 
       const barbers = await repository.find({ relations: ['images'] });
 
-      return res.json(barbers);
+      return res.json(BarberView.renderMany(barbers));
     } catch (error) {
-      console.log(error);
-      return res.status(400).json({ message: 'Error 400' });
+      return res.status(400).json({
+        message: 'Erro ao encontrar os barbeiros',
+      });
     }
   }
 
@@ -33,9 +36,9 @@ export default class ClientController {
         });
       }
 
-      return res.json(barber);
+      return res.json(BarberView.render(barber));
     } catch (error) {
-      return res.status(400).json({ message: 'Error 400' });
+      return res.status(400).json({ message: 'Erro ao encontrar o barbeiro' });
     }
   }
 

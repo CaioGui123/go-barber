@@ -1,6 +1,8 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Client from '../models/Client';
+import ClientView from '../views/ClientView';
+
 import validate from '../validations/ClientValidation';
 import deleteImage from '../utils/deleteImage';
 
@@ -11,7 +13,7 @@ export default class ClientController {
 
       const clients = await repository.find();
 
-      return res.json(clients);
+      return res.json(ClientView.renderMany(clients));
     } catch (error) {
       return res.status(400).json({ message: 'Erro ao procurar os clientes' });
     }
@@ -30,7 +32,7 @@ export default class ClientController {
         });
       }
 
-      return res.json(client);
+      return res.json(ClientView.render(client));
     } catch (error) {
       return res.status(400).json({ message: 'Erro ao encontrar o cliente' });
     }
@@ -90,7 +92,9 @@ export default class ClientController {
         });
       }
 
-      deleteImage(client.image);
+      if (client.image) {
+        deleteImage(client.image);
+      }
 
       await repository.delete(id);
 
