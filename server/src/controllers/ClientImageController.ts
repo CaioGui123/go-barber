@@ -10,7 +10,7 @@ export default class ClientController {
       const repository = getRepository(Client);
       const { id } = req.params;
 
-      const client = await repository.findOneOrFail(id);
+      const client = await repository.findOne(id);
 
       if (!client) {
         return res.status(400).json({
@@ -40,7 +40,7 @@ export default class ClientController {
       const repository = getRepository(Client);
       const { id } = req.params;
 
-      const client = await repository.findOneOrFail(id);
+      const client = await repository.findOne(id);
 
       if (!client) {
         return res.status(400).json({

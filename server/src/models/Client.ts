@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BeforeInsert,
+  BeforeUpdate,
+} from 'typeorm';
+import bcryptjs from 'bcryptjs';
 
 @Entity('clients')
 export default class Client {
@@ -19,4 +26,14 @@ export default class Client {
 
   @Column()
   image: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async generatePasswordHash() {
+    this.password = await bcryptjs.hash(this.password, 8);
+  }
+
+  public passwordIsValid(password: string) {
+    return bcryptjs.compare(password, this.password);
+  }
 }

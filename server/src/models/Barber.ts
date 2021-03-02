@@ -4,8 +4,11 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   JoinColumn,
+  BeforeInsert,
+  BeforeUpdate,
 } from 'typeorm';
 import BarberImage from './BarberImage';
+import bcryptjs from 'bcryptjs';
 
 @Entity('barbers')
 export default class Barber {
@@ -41,4 +44,10 @@ export default class Barber {
   })
   @JoinColumn({ name: 'barber_id' })
   images: BarberImage[];
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  async generatePasswordHash() {
+    this.password = await bcryptjs.hash(this.password, 8);
+  }
 }

@@ -12,7 +12,7 @@ export default class BarberImageController {
       const imageRepository = getRepository(BarberImage);
       const { id } = req.params;
 
-      const barber = await barberRepository.findOneOrFail(id);
+      const barber = await barberRepository.findOne(id);
 
       if (!barber) {
         return res.status(400).json({
@@ -50,7 +50,7 @@ export default class BarberImageController {
       const imageRepository = getRepository(BarberImage);
       const { barberId, imageId } = req.params;
 
-      const barber = await barberRepository.findOneOrFail(barberId);
+      const barber = await barberRepository.findOne(barberId);
 
       if (!barber) {
         return res.status(400).json({
@@ -58,7 +58,7 @@ export default class BarberImageController {
         });
       }
 
-      const image = await imageRepository.findOneOrFail(imageId);
+      const image = await imageRepository.findOne(imageId);
 
       if (!image) {
         return res.status(400).json({ message: 'Imagem não encontrada' });

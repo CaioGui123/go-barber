@@ -12,7 +12,8 @@ const upload = multer(multerConfig);
 
 const routes = Router();
 
-// Clients Routes
+// Clients
+routes.post('/clients/login', ClientController.login);
 routes.get('/clients', ClientController.index);
 routes.get('/clients/:id', ClientController.show);
 routes.post('/clients', ClientController.store);

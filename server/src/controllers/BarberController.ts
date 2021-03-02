@@ -26,7 +26,7 @@ export default class ClientController {
       const repository = getRepository(Barber);
       const { id } = req.params;
 
-      const barber = await repository.findOneOrFail(id, {
+      const barber = await repository.findOne(id, {
         relations: ['images'],
       });
 
@@ -65,7 +65,7 @@ export default class ClientController {
       const { id } = req.params;
       const data = req.body;
 
-      const barber = await repository.findOneOrFail(id);
+      const barber = await repository.findOne(id);
 
       if (!barber) {
         return res.status(400).json({
@@ -88,7 +88,7 @@ export default class ClientController {
       const repository = getRepository(Barber);
       const { id } = req.params;
 
-      const barber = await repository.findOneOrFail(id, {
+      const barber = await repository.findOne(id, {
         relations: ['images'],
       });
 
