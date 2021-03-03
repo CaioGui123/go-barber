@@ -1,11 +1,14 @@
 import { Router } from 'express';
 import multer from 'multer';
 
+// Controllers
 import ClientController from './controllers/ClientController';
 import ClientImageController from './controllers/ClientImageController';
 import BarberController from './controllers/BarberController';
 import BarberImageController from './controllers/BarberImageController';
 
+// Middlewares
+import requiresAuth from './middlewares/requiresAuth';
 import multerConfig from './config/multer';
 
 const upload = multer(multerConfig);
@@ -15,18 +18,23 @@ const routes = Router();
 // Clients
 routes.post('/clients/login', ClientController.login);
 routes.get('/clients', ClientController.index);
-routes.get('/clients/:id', ClientController.show);
-routes.post('/clients', ClientController.store);
-routes.put('/clients/:id', ClientController.update);
-routes.delete('/clients/:id', ClientController.destroy);
+routes.get('/clients/:id', requiresAuth, ClientController.show);
+routes.post('/clients', ClientController.register);
+routes.put('/clients/:id', requiresAuth, ClientController.update);
+routes.delete('/clients/:id', requiresAuth, ClientController.destroy);
 
 // Client Images Routes
 routes.post(
   '/clients/:id/image',
+  requiresAuth,
   upload.array('image', 1),
   ClientImageController.store,
 );
-routes.delete('/clients/:id/image', ClientImageController.destroy);
+routes.delete(
+  '/clients/:id/image',
+  requiresAuth,
+  ClientImageController.destroy,
+);
 
 // Barbers Routes
 routes.get('/barbers', BarberController.index);

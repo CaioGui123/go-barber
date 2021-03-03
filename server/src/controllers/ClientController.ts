@@ -1,9 +1,8 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
 import Client from '../models/Client';
 import ClientView from '../views/ClientView';
-
+import jwt from 'jsonwebtoken';
 import validate from '../validations/ClientValidation';
 import validateLogin from '../validations/ClientLoginValidation';
 import deleteImage from '../utils/deleteImage';
@@ -22,15 +21,15 @@ export default class ClientController {
         return res.status(401).json({ message: 'Email ou senha incorretos' });
       }
 
-      const { id, name } = client;
+      const token = jwt.sign(
+        ClientView.render(client),
+        process.env.TOKEN_SECRET || '',
+        {
+          expiresIn: process.env.TOKEN_EXPIRES_IN,
+        },
+      );
 
-      const secret = process.env.TOKEN_SECRET ? process.env.TOKEN_SECRET : '';
-
-      const token = jwt.sign({ id, name, email }, secret, {
-        expiresIn: process.env.TOKEN_EXPIRES_IN,
-      });
-
-      return res.json({ token, client });
+      return res.json({ token, user: ClientView.render(client) });
     } catch (errors) {
       return res.status(422).json({
         message: 'Email ou senha incorretos',
@@ -70,7 +69,7 @@ export default class ClientController {
     }
   }
 
-  static async store(req: Request, res: Response) {
+  static async register(req: Request, res: Response) {
     try {
       const repository = getRepository(Client);
       const data = req.body;
