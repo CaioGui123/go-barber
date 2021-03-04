@@ -2,11 +2,42 @@ import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Barber from '../models/Barber';
 import BarberView from '../views/BarberView';
-
+import jwt from 'jsonwebtoken';
 import validate from '../validations/BarberValidation';
+import validateLogin from '../validations/LoginValidation';
 import deleteImage from '../utils/deleteImage';
 
 export default class ClientController {
+  static async login(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Barber);
+      const { email, password } = req.body;
+
+      await validateLogin({ email, password });
+
+      const barber = await repository.findOne({ where: { email } });
+
+      if (!barber || !(await barber.passwordIsValid(password))) {
+        return res.status(401).json({ message: 'Email ou senha incorretos' });
+      }
+
+      const token = jwt.sign(
+        BarberView.render(barber),
+        process.env.TOKEN_SECRET || '',
+        {
+          expiresIn: process.env.TOKEN_EXPIRES_IN,
+        },
+      );
+
+      return res.json({ token, user: BarberView.render(barber) });
+    } catch (errors) {
+      return res.status(422).json({
+        message: 'Email ou senha incorretos',
+        errors,
+      });
+    }
+  }
+
   static async index(req: Request, res: Response) {
     try {
       const repository = getRepository(Barber);
@@ -42,7 +73,7 @@ export default class ClientController {
     }
   }
 
-  static async store(req: Request, res: Response) {
+  static async register(req: Request, res: Response) {
     try {
       const repository = getRepository(Barber);
       const data = req.body;

@@ -37,20 +37,23 @@ routes.delete(
 );
 
 // Barbers Routes
+routes.post('/barbers/login', BarberController.login);
 routes.get('/barbers', BarberController.index);
 routes.get('/barbers/:id', BarberController.show);
-routes.post('/barbers', BarberController.store);
-routes.put('/barbers/:id', BarberController.update);
-routes.delete('/barbers/:id', BarberController.destroy);
+routes.post('/barbers', BarberController.register);
+routes.put('/barbers/:id', requiresAuth, BarberController.update);
+routes.delete('/barbers/:id', requiresAuth, BarberController.destroy);
 
 // Barber Images Routes
 routes.post(
   '/barbers/:id/images',
+  requiresAuth,
   upload.array('images[]', 10),
   BarberImageController.massStore,
 );
 routes.delete(
   '/barbers/:barberId/images/:imageId',
+  requiresAuth,
   BarberImageController.destroy,
 );
 

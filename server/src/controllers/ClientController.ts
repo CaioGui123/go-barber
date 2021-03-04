@@ -4,7 +4,7 @@ import Client from '../models/Client';
 import ClientView from '../views/ClientView';
 import jwt from 'jsonwebtoken';
 import validate from '../validations/ClientValidation';
-import validateLogin from '../validations/ClientLoginValidation';
+import validateLogin from '../validations/LoginValidation';
 import deleteImage from '../utils/deleteImage';
 
 export default class ClientController {

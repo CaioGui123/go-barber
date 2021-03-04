@@ -50,4 +50,8 @@ export default class Barber {
   async generatePasswordHash() {
     this.password = await bcryptjs.hash(this.password, 8);
   }
+
+  public passwordIsValid(password: string) {
+    return bcryptjs.compare(password, this.password);
+  }
 }

@@ -18,7 +18,7 @@ interface ICredentials {
   password: string;
 }
 
-export default async function ClientValidation(data: ICredentials) {
+export default async function LoginValidation(data: ICredentials) {
   try {
     await schema.validate(data, {
       abortEarly: false,
