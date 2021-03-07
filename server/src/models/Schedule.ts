@@ -22,6 +22,9 @@ export default class Schedule {
   @Column({ default: false })
   is_cutted: boolean;
 
+  @Column({ default: false })
+  is_accepted: boolean;
+
   @Column()
   price: number;
 

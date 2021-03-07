@@ -1,10 +1,12 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Barber from '../models/Barber';
+import Schedule from '../models/Schedule';
 import BarberView from '../views/BarberView';
+import ScheduleView from '../views/ScheduleView';
+import BarberValidation from '../validations/BarberValidation';
+import LoginValidation from '../validations/LoginValidation';
 import jwt from 'jsonwebtoken';
-import validate from '../validations/BarberValidation';
-import validateLogin from '../validations/LoginValidation';
 import deleteImage from '../utils/deleteImage';
 
 export default class ClientController {
@@ -13,7 +15,7 @@ export default class ClientController {
       const repository = getRepository(Barber);
       const { email, password } = req.body;
 
-      await validateLogin({ email, password });
+      await LoginValidation({ email, password });
 
       const barber = await repository.findOne({ where: { email } });
 
@@ -78,7 +80,7 @@ export default class ClientController {
       const repository = getRepository(Barber);
       const data = req.body;
 
-      await validate(data);
+      await BarberValidation(data);
 
       const barber = repository.create(data);
 
@@ -104,7 +106,7 @@ export default class ClientController {
         });
       }
 
-      await validate(data);
+      await BarberValidation(data);
 
       await repository.update(id, data);
 
@@ -138,6 +140,120 @@ export default class ClientController {
       return res.json({ message: 'Conta deletada com sucesso!' });
     } catch (error) {
       return res.status(400).json({ message: 'Erro ao deletar a conta' });
+    }
+  }
+
+  static async showPendingSchedules(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Schedule);
+      const { id } = req.params;
+
+      const schedules = await repository.find({
+        relations: ['client'],
+        where: {
+          barber_id: id,
+          is_cutted: false,
+        },
+      });
+
+      return res.json(ScheduleView.renderMany(schedules));
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        message: 'Erro ao procurar os agendamentos',
+      });
+    }
+  }
+
+  static async schedulesHistory(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Schedule);
+      const { id } = req.params;
+
+      const schedules = await repository.find({
+        relations: ['barber'],
+        where: { barber_id: id },
+      });
+
+      return res.json(ScheduleView.renderMany(schedules));
+    } catch (error) {
+      return res.status(400).json({
+        message: 'Erro ao procurar os agendamentos',
+      });
+    }
+  }
+
+  static async showSchedule(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Schedule);
+      const { barberId, scheduleId } = req.params;
+
+      const schedule = await repository.findOne(scheduleId, {
+        relations: ['client'],
+        where: { barber_id: barberId },
+      });
+
+      if (!schedule) {
+        return res.status(400).json({
+          message: `Agendamento #${scheduleId} não encontrado`,
+        });
+      }
+
+      return res.json(ScheduleView.render(schedule));
+    } catch (error) {
+      return res.status(400).json({
+        message: 'Erro ao procurar os agendamentos',
+      });
+    }
+  }
+
+  static async acceptSchedule(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Schedule);
+      const { barberId, scheduleId } = req.params;
+
+      const schedule = repository.findOne(scheduleId, {
+        where: { barber_id: barberId },
+      });
+
+      if (!schedule) {
+        return res.status(400).json({
+          message: `Agendamento #${scheduleId} não encontrado`,
+        });
+      }
+
+      await repository.update(scheduleId, { is_accepted: true });
+
+      return res.status(201).json({ message: 'Corte confirmado!' });
+    } catch (error) {
+      return res.status(400).json({
+        message: 'Erro ao aceitar o agendamento',
+      });
+    }
+  }
+
+  static async dontAcceptSchedule(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Schedule);
+      const { barberId, scheduleId } = req.params;
+
+      const schedule = repository.findOne(scheduleId, {
+        where: { barber_id: barberId },
+      });
+
+      if (!schedule) {
+        return res.status(400).json({
+          message: `Agendamento #${scheduleId} não encontrado`,
+        });
+      }
+
+      await repository.update(scheduleId, { is_accepted: false });
+
+      return res.status(201).json({ message: 'Corte confirmado!' });
+    } catch (error) {
+      return res.status(400).json({
+        message: 'Erro ao aceitar o agendamento',
+      });
     }
   }
 }

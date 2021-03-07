@@ -38,6 +38,11 @@ export class createBarberClientTable1614918464683
             default: false,
           },
           {
+            name: 'is_accepted',
+            type: 'boolean',
+            default: false,
+          },
+          {
             name: 'price',
             type: 'decimal',
             scale: 2,

@@ -8,6 +8,7 @@ export default {
       id: schedule.id,
       price: `R$ ${schedule.price.toLocaleString()}`,
       is_cutted: schedule.is_cutted,
+      is_accepted: schedule.is_accepted,
       scheduled_at: new Date(schedule.scheduled_at).toLocaleString(),
       scheduled_to: new Date(schedule.scheduled_to).toLocaleString(),
       barber: schedule.barber ? BarberView.render(schedule.barber) : {},
