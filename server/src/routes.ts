@@ -15,6 +15,14 @@ const upload = multer(multerConfig);
 
 const routes = Router();
 
+// Client Schedules Routes
+routes.get('/clients/:id/schedules', ClientController.showSchedules);
+routes.post('/clients/:id/schedules', ClientController.saveSchedule);
+routes.delete(
+  '/clients/:clientId/schedules/:scheduleId',
+  ClientController.removeSchedule,
+);
+
 // Clients
 routes.post('/clients/login', ClientController.login);
 routes.get('/clients', ClientController.index);

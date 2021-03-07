@@ -2,9 +2,12 @@ import {
   Entity,
   Column,
   PrimaryGeneratedColumn,
+  OneToMany,
+  JoinColumn,
   BeforeInsert,
   BeforeUpdate,
 } from 'typeorm';
+import Schedule from './Schedule';
 import bcryptjs from 'bcryptjs';
 
 @Entity('clients')
@@ -26,6 +29,12 @@ export default class Client {
 
   @Column()
   image: string;
+
+  @OneToMany(() => Schedule, (schedule) => schedule.client, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'client_id' })
+  schedules: Schedule[];
 
   @BeforeInsert()
   @BeforeUpdate()

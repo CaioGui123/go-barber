@@ -3,11 +3,13 @@ import {
   Column,
   PrimaryGeneratedColumn,
   OneToMany,
+  ManyToOne,
   JoinColumn,
   BeforeInsert,
   BeforeUpdate,
 } from 'typeorm';
 import BarberImage from './BarberImage';
+import Schedule from './Schedule';
 import bcryptjs from 'bcryptjs';
 
 @Entity('barbers')
@@ -44,6 +46,12 @@ export default class Barber {
   })
   @JoinColumn({ name: 'barber_id' })
   images: BarberImage[];
+
+  @OneToMany(() => Schedule, (schedule) => schedule.barber, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'barber_id' })
+  schedules: Schedule[];
 
   @BeforeInsert()
   @BeforeUpdate()
