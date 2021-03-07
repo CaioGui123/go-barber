@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import Client from '../models/Client';
 import Schedule from '../models/Schedule';
 import ClientView from '../views/ClientView';
+import ScheduleView from '../views/ScheduleView';
 import ClientValidation from '../validations/ClientValidation';
 import LoginValidation from '../validations/LoginValidation';
 import ScheduleValidate from '../validations/ScheduleValidation';
@@ -137,7 +138,29 @@ export default class ClientController {
     }
   }
 
-  static async showSchedules(req: Request, res: Response) {
+  static async showPendingSchedules(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Schedule);
+      const { id } = req.params;
+
+      const schedules = await repository.find({
+        relations: ['barber'],
+        where: {
+          client_id: id,
+          is_cutted: false,
+        },
+      });
+
+      return res.json(ScheduleView.renderMany(schedules));
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        message: 'Erro ao procurar os agendamentos',
+      });
+    }
+  }
+
+  static async schedulesHistory(req: Request, res: Response) {
     try {
       const repository = getRepository(Schedule);
       const { id } = req.params;
@@ -147,10 +170,35 @@ export default class ClientController {
         where: { client_id: id },
       });
 
-      return res.json(schedules);
+      return res.json(ScheduleView.renderMany(schedules));
     } catch (error) {
-      console.log(error);
-      return res.status(400).json({ message: 'Erro ao procurar os clientes' });
+      return res.status(400).json({
+        message: 'Erro ao procurar os agendamentos',
+      });
+    }
+  }
+
+  static async showSchedule(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Schedule);
+      const { clientId, scheduleId } = req.params;
+
+      const schedule = await repository.findOne(scheduleId, {
+        relations: ['barber'],
+        where: { client_id: clientId },
+      });
+
+      if (!schedule) {
+        return res.status(400).json({
+          message: `Agendamento #${scheduleId} não encontrado`,
+        });
+      }
+
+      return res.json(ScheduleView.render(schedule));
+    } catch (error) {
+      return res.status(400).json({
+        message: 'Erro ao procurar os agendamentos',
+      });
     }
   }
 
@@ -180,11 +228,8 @@ export default class ClientController {
       const repository = getRepository(Schedule);
       const { clientId, scheduleId } = req.params;
 
-      const schedule = await repository.findOne({
-        where: {
-          id: scheduleId,
-          client_id: clientId,
-        },
+      const schedule = await repository.findOne(scheduleId, {
+        where: { client_id: clientId },
       });
 
       if (!schedule) {

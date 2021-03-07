@@ -19,7 +19,7 @@ export default class Schedule {
   @Column()
   scheduled_to: string;
 
-  @Column()
+  @Column({ default: false })
   is_cutted: boolean;
 
   @Column()
@@ -33,9 +33,9 @@ export default class Schedule {
 
   @ManyToOne(() => Barber, (barber) => barber.schedules)
   @JoinColumn({ name: 'barber_id' })
-  barber: Barber[];
+  barber: Barber;
 
   @ManyToOne(() => Client, (client) => client.schedules)
   @JoinColumn({ name: 'client_id' })
-  client: Client[];
+  client: Client;
 }
