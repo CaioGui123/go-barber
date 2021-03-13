@@ -2,10 +2,12 @@ import { Router } from 'express';
 import multer from 'multer';
 
 // Controllers
-import ClientController from './controllers/ClientController';
-import ClientImageController from './controllers/ClientImageController';
-import BarberController from './controllers/BarberController';
-import BarberImageController from './controllers/BarberImageController';
+import ClientController from './controllers/Client/ClientController';
+import ClientImageController from './controllers/Client/ImageController';
+import ClientScheduleController from './controllers/Client/ScheduleController';
+import BarberController from './controllers/Barber/BarberController';
+import BarberImageController from './controllers/Barber/ImageController';
+import BarberScheduleController from './controllers/Barber/ScheduleController';
 
 // Middlewares
 import requiresAuth from './middlewares/requiresAuth';
@@ -37,16 +39,16 @@ routes.delete(
 );
 
 // Client Schedules Routes
-routes.get('/clients/:id/schedules', ClientController.showPendingSchedules);
-routes.get('/clients/:id/schedules/history', ClientController.schedulesHistory);
+routes.get('/clients/:id/schedules', ClientScheduleController.getPendings);
+routes.get('/clients/:id/schedules/history', ClientScheduleController.history);
 routes.get(
   '/clients/:clientId/schedules/:scheduleId',
-  ClientController.showSchedule,
+  ClientScheduleController.show,
 );
-routes.post('/clients/:id/schedules', ClientController.saveSchedule);
+routes.post('/clients/:id/schedules', ClientScheduleController.store);
 routes.delete(
   '/clients/:clientId/schedules/:scheduleId',
-  ClientController.removeSchedule,
+  ClientScheduleController.destroy,
 );
 
 // Client Rating
@@ -77,19 +79,19 @@ routes.delete(
 );
 
 // Barber Schedules Routes
-routes.get('/barbers/:id/schedules', BarberController.showPendingSchedules);
-routes.get('/barbers/:id/schedules/history', BarberController.schedulesHistory);
+routes.get('/barbers/:id/schedules', BarberScheduleController.getPedings);
+routes.get('/barbers/:id/schedules/history', BarberScheduleController.history);
 routes.get(
   '/barbers/:barberId/schedules/:scheduleId',
-  BarberController.showSchedule,
+  BarberScheduleController.show,
 );
 routes.post(
   '/barbers/:barberId/schedules/:scheduleId/accept',
-  BarberController.acceptSchedule,
+  BarberScheduleController.acceptSchedule,
 );
 routes.post(
   '/barbers/:barberId/schedules/:scheduleId/dont-accept',
-  BarberController.dontAcceptSchedule,
+  BarberScheduleController.dontAcceptSchedule,
 );
 
 export default routes;

@@ -1,8 +1,8 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
-import Client from '../models/Client';
+import Client from '../../models/Client';
 
-import deleteImage from '../utils/deleteImage';
+import deleteImage from '../../utils/deleteImage';
 
 export default class ClientController {
   static async store(req: Request, res: Response) {

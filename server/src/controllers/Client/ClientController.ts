@@ -1,16 +1,16 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
-import Client from '../models/Client';
-import Schedule from '../models/Schedule';
-import Rating from '../models/Rating';
-import ClientView from '../views/ClientView';
-import ScheduleView from '../views/ScheduleView';
-import ClientValidation from '../validations/ClientValidation';
-import LoginValidation from '../validations/LoginValidation';
-import ScheduleValidate from '../validations/ScheduleValidation';
-import RatingValidation from '../validations/RatingValidation';
+import Client from '../../models/Client';
+import Schedule from '../../models/Schedule';
+import Rating from '../../models/Rating';
+import ClientView from '../../views/ClientView';
+import ScheduleView from '../../views/ScheduleView';
+import ClientValidation from '../../validations/ClientValidation';
+import LoginValidation from '../../validations/LoginValidation';
+import ScheduleValidate from '../../validations/ScheduleValidation';
+import RatingValidation from '../../validations/RatingValidation';
 import jwt from 'jsonwebtoken';
-import deleteImage from '../utils/deleteImage';
+import deleteImage from '../../utils/deleteImage';
 
 export default class ClientController {
   static async login(req: Request, res: Response) {
@@ -137,114 +137,6 @@ export default class ClientController {
       return res.json({ message: `Conta deletada com sucesso!` });
     } catch (error) {
       return res.status(400).json({ message: 'Error ao deletar a conta' });
-    }
-  }
-
-  static async showPendingSchedules(req: Request, res: Response) {
-    try {
-      const repository = getRepository(Schedule);
-      const { id } = req.params;
-
-      const schedules = await repository.find({
-        relations: ['barber'],
-        where: {
-          client_id: id,
-          is_cutted: false,
-        },
-      });
-
-      return res.json(ScheduleView.renderMany(schedules));
-    } catch (error) {
-      console.log(error);
-      return res.status(400).json({
-        message: 'Erro ao procurar os agendamentos',
-      });
-    }
-  }
-
-  static async schedulesHistory(req: Request, res: Response) {
-    try {
-      const repository = getRepository(Schedule);
-      const { id } = req.params;
-
-      const schedules = await repository.find({
-        relations: ['barber'],
-        where: { client_id: id },
-      });
-
-      return res.json(ScheduleView.renderMany(schedules));
-    } catch (error) {
-      return res.status(400).json({
-        message: 'Erro ao procurar os agendamentos',
-      });
-    }
-  }
-
-  static async showSchedule(req: Request, res: Response) {
-    try {
-      const repository = getRepository(Schedule);
-      const { clientId, scheduleId } = req.params;
-
-      const schedule = await repository.findOne(scheduleId, {
-        relations: ['barber'],
-        where: { client_id: clientId },
-      });
-
-      if (!schedule) {
-        return res.status(400).json({
-          message: `Agendamento #${scheduleId} não encontrado`,
-        });
-      }
-
-      return res.json(ScheduleView.render(schedule));
-    } catch (error) {
-      return res.status(400).json({
-        message: 'Erro ao procurar os agendamentos',
-      });
-    }
-  }
-
-  static async saveSchedule(req: Request, res: Response) {
-    try {
-      const repository = getRepository(Schedule);
-      const { id } = req.params;
-      const data = {
-        ...req.body,
-        client_id: id,
-      };
-
-      await ScheduleValidate(data);
-
-      const schedule = repository.create(data);
-
-      await repository.save(schedule);
-
-      return res.status(201).json(schedule);
-    } catch (errors) {
-      return res.status(422).json({ message: 'Erros de Validação', errors });
-    }
-  }
-
-  static async removeSchedule(req: Request, res: Response) {
-    try {
-      const repository = getRepository(Schedule);
-      const { clientId, scheduleId } = req.params;
-
-      const schedule = await repository.findOne(scheduleId, {
-        where: { client_id: clientId },
-      });
-
-      if (!schedule) {
-        return res.status(400).json({
-          message: `Agendamento #${scheduleId} não encontrado`,
-        });
-      }
-
-      await repository.delete(scheduleId);
-
-      return res.json({ message: 'Agendamento removido com sucesso!' });
-    } catch (errors) {
-      return res.status(201).json({ message: 'Erro ao remover o agendamento' });
     }
   }
 

@@ -1,9 +1,9 @@
 import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
-import Barber from '../models/Barber';
-import BarberImage from '../models/BarberImage';
+import Barber from '../../models/Barber';
+import BarberImage from '../../models/BarberImage';
 
-import deleteImage from '../utils/deleteImage';
+import deleteImage from '../../utils/deleteImage';
 
 export default class BarberImageController {
   static async massStore(req: Request, res: Response) {
