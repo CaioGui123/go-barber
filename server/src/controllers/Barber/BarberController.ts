@@ -142,4 +142,28 @@ export default class ClientController {
       return res.status(400).json({ message: 'Erro ao deletar a conta' });
     }
   }
+
+  static async getRatings(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Barber);
+      const { id } = req.params;
+
+      const barber = await repository.findOne(id, {
+        relations: ['ratings', 'ratings.client'],
+      });
+
+      if (!barber) {
+        return res.status(400).json({
+          message: `Barbeiro #${id} não encontrado`,
+        });
+      }
+
+      res.json(BarberView.render(barber));
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        message: 'Erro ao encontrar as avaliações',
+      });
+    }
+  }
 }

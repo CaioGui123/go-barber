@@ -25,7 +25,7 @@ routes.post('/clients', ClientController.register);
 routes.put('/clients/:id', requiresAuth, ClientController.update);
 routes.delete('/clients/:id', requiresAuth, ClientController.destroy);
 
-// Client Images Routes
+// Client Images
 routes.post(
   '/clients/:id/image',
   requiresAuth,
@@ -38,7 +38,7 @@ routes.delete(
   ClientImageController.destroy,
 );
 
-// Client Schedules Routes
+// Client Schedules
 routes.get('/clients/:id/schedules', ClientScheduleController.getPendings);
 routes.get('/clients/:id/schedules/history', ClientScheduleController.history);
 routes.get(
@@ -57,7 +57,7 @@ routes.post(
   ClientController.rateBarber,
 );
 
-// Barbers Routes
+// Barbers
 routes.post('/barbers/login', BarberController.login);
 routes.get('/barbers', BarberController.index);
 routes.get('/barbers/:id', BarberController.show);
@@ -65,7 +65,7 @@ routes.post('/barbers', BarberController.register);
 routes.put('/barbers/:id', requiresAuth, BarberController.update);
 routes.delete('/barbers/:id', requiresAuth, BarberController.destroy);
 
-// Barber Images Routes
+// Barber Images
 routes.post(
   '/barbers/:id/images',
   requiresAuth,
@@ -78,7 +78,7 @@ routes.delete(
   BarberImageController.destroy,
 );
 
-// Barber Schedules Routes
+// Barber Schedules
 routes.get('/barbers/:id/schedules', BarberScheduleController.getPedings);
 routes.get('/barbers/:id/schedules/history', BarberScheduleController.history);
 routes.get(
@@ -93,5 +93,8 @@ routes.post(
   '/barbers/:barberId/schedules/:scheduleId/dont-accept',
   BarberScheduleController.dontAcceptSchedule,
 );
+
+// Barber Ratings
+routes.get('/barbers/:id/ratings', BarberController.getRatings);
 
 export default routes;

@@ -8,10 +8,6 @@ export default {
     };
   },
   renderMany(barberImages: BarberImage[]) {
-    if (barberImages) {
-      return barberImages.map((barberImage) => this.render(barberImage));
-    }
-
-    return [];
+    return barberImages.map((barberImage) => this.render(barberImage));
   },
 };

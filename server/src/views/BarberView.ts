@@ -1,5 +1,6 @@
 import Barber from '../models/Barber';
 import BarberImageView from './BarberImageView';
+import RatingView from './RatingView';
 
 export default {
   render(barber: Barber) {
@@ -12,7 +13,8 @@ export default {
       neighborhood: barber.neighborhood,
       street: barber.street,
       number: barber.number,
-      images: BarberImageView.renderMany(barber.images),
+      images: barber.images ? BarberImageView.renderMany(barber.images) : [],
+      ratings: barber.ratings ? RatingView.renderMany(barber.ratings) : [],
     };
   },
   renderMany(barbers: Barber[]) {
