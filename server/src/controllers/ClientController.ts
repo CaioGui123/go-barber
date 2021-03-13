@@ -2,11 +2,13 @@ import { getRepository } from 'typeorm';
 import { Request, Response } from 'express';
 import Client from '../models/Client';
 import Schedule from '../models/Schedule';
+import Rating from '../models/Rating';
 import ClientView from '../views/ClientView';
 import ScheduleView from '../views/ScheduleView';
 import ClientValidation from '../validations/ClientValidation';
 import LoginValidation from '../validations/LoginValidation';
 import ScheduleValidate from '../validations/ScheduleValidation';
+import RatingValidation from '../validations/RatingValidation';
 import jwt from 'jsonwebtoken';
 import deleteImage from '../utils/deleteImage';
 
@@ -243,6 +245,35 @@ export default class ClientController {
       return res.json({ message: 'Agendamento removido com sucesso!' });
     } catch (errors) {
       return res.status(201).json({ message: 'Erro ao remover o agendamento' });
+    }
+  }
+
+  static async rateBarber(req: Request, res: Response) {
+    try {
+      const repository = getRepository(Rating);
+      const { clientId, barberId, rateId } = req.params;
+
+      const data = {
+        ...req.body,
+        client_id: clientId,
+        barber_id: barberId,
+      };
+
+      await RatingValidation(data);
+
+      let rating;
+
+      if (rateId) {
+        await repository.update(rateId, data);
+      } else {
+        rating = repository.create(data);
+
+        await repository.save(rating);
+      }
+
+      return res.status(201).json(rating || data);
+    } catch (errors) {
+      return res.status(422).json(errors);
     }
   }
 }

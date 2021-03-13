@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import BarberImage from './BarberImage';
 import Schedule from './Schedule';
+import Rating from './Rating';
 import bcryptjs from 'bcryptjs';
 
 @Entity('barbers')
@@ -41,17 +42,17 @@ export default class Barber {
   @Column()
   number: string;
 
-  @OneToMany(() => BarberImage, (image) => image.barber, {
-    cascade: ['insert', 'update'],
-  })
+  @OneToMany(() => BarberImage, (image) => image.barber, { cascade: true })
   @JoinColumn({ name: 'barber_id' })
   images: BarberImage[];
 
-  @OneToMany(() => Schedule, (schedule) => schedule.barber, {
-    cascade: true,
-  })
+  @OneToMany(() => Schedule, (schedule) => schedule.barber, { cascade: true })
   @JoinColumn({ name: 'barber_id' })
   schedules: Schedule[];
+
+  @OneToMany(() => Rating, (rating) => rating.barber, { cascade: true })
+  @JoinColumn({ name: 'barber_id' })
+  ratings: Rating[];
 
   @BeforeInsert()
   @BeforeUpdate()

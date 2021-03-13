@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import 'reflect-metadata';
 
 dotenv.config();
 
@@ -9,6 +8,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import routes from './routes';
 
+import 'reflect-metadata';
 import './database/connection';
 
 const app = express();

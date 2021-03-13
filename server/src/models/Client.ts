@@ -8,6 +8,7 @@ import {
   BeforeUpdate,
 } from 'typeorm';
 import Schedule from './Schedule';
+import Rating from './Rating';
 import bcryptjs from 'bcryptjs';
 
 @Entity('clients')
@@ -30,11 +31,13 @@ export default class Client {
   @Column()
   image: string;
 
-  @OneToMany(() => Schedule, (schedule) => schedule.client, {
-    cascade: true,
-  })
+  @OneToMany(() => Schedule, (schedule) => schedule.client, { cascade: true })
   @JoinColumn({ name: 'client_id' })
   schedules: Schedule[];
+
+  @OneToMany(() => Rating, (rating) => rating.client, { cascade: true })
+  @JoinColumn({ name: 'client_id' })
+  ratings: Rating[];
 
   @BeforeInsert()
   @BeforeUpdate()

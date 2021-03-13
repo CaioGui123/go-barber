@@ -15,22 +15,6 @@ const upload = multer(multerConfig);
 
 const routes = Router();
 
-// Barber Schedules Routes
-routes.get('/barbers/:id/schedules', BarberController.showPendingSchedules);
-routes.get('/barbers/:id/schedules/history', BarberController.schedulesHistory);
-routes.get(
-  '/barbers/:barberId/schedules/:scheduleId',
-  BarberController.showSchedule,
-);
-routes.post(
-  '/barbers/:barberId/schedules/:scheduleId/accept',
-  BarberController.acceptSchedule,
-);
-routes.post(
-  '/barbers/:barberId/schedules/:scheduleId/dont-accept',
-  BarberController.dontAcceptSchedule,
-);
-
 // Clients
 routes.post('/clients/login', ClientController.login);
 routes.get('/clients', ClientController.index);
@@ -65,6 +49,12 @@ routes.delete(
   ClientController.removeSchedule,
 );
 
+// Client Rating
+routes.post(
+  '/clients/:clientId/ratings/:barberId/:rateId?',
+  ClientController.rateBarber,
+);
+
 // Barbers Routes
 routes.post('/barbers/login', BarberController.login);
 routes.get('/barbers', BarberController.index);
@@ -84,6 +74,22 @@ routes.delete(
   '/barbers/:barberId/images/:imageId',
   requiresAuth,
   BarberImageController.destroy,
+);
+
+// Barber Schedules Routes
+routes.get('/barbers/:id/schedules', BarberController.showPendingSchedules);
+routes.get('/barbers/:id/schedules/history', BarberController.schedulesHistory);
+routes.get(
+  '/barbers/:barberId/schedules/:scheduleId',
+  BarberController.showSchedule,
+);
+routes.post(
+  '/barbers/:barberId/schedules/:scheduleId/accept',
+  BarberController.acceptSchedule,
+);
+routes.post(
+  '/barbers/:barberId/schedules/:scheduleId/dont-accept',
+  BarberController.dontAcceptSchedule,
 );
 
 export default routes;

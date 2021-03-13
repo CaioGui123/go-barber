@@ -8,7 +8,7 @@ import {
 import Barber from './Barber';
 import Client from './Client';
 
-@Entity('barber_client')
+@Entity('schedule')
 export default class Schedule {
   @PrimaryGeneratedColumn('increment')
   id: number;
